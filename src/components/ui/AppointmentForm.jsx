@@ -28,19 +28,12 @@ export default function AppointmentForm() {
     borderRadius: '12px', fontFamily: 'Jost, sans-serif',
     fontSize: '0.95rem', background: 'white',
     color: 'var(--text-dark)', outline: 'none',
-    transition: 'border-color 0.3s'
-  };
-
-  const labelStyle = {
-    fontFamily: 'Jost, sans-serif', fontSize: '0.85rem',
-    color: 'var(--sage-dark)', letterSpacing: '0.5px',
-    marginBottom: '0.4rem', display: 'block',
-    textTransform: 'uppercase', fontWeight: 500
+    transition: 'border-color 0.3s', boxSizing: 'border-box'
   };
 
   return (
     <section id="appointment" style={{
-      padding: '6rem',
+      padding: 'clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 6rem)',
       background: 'linear-gradient(135deg, #e8f0e8, #faf7f0)',
     }}>
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -52,10 +45,15 @@ export default function AppointmentForm() {
       <div style={{
         maxWidth: '750px', margin: '0 auto',
         background: 'white', borderRadius: '24px',
-        padding: '3rem', boxShadow: '0 20px 80px rgba(0,0,0,0.08)'
+        padding: 'clamp(1.5rem, 5vw, 3rem)',
+        boxShadow: '0 20px 80px rgba(0,0,0,0.08)'
       }}>
         <form onSubmit={submit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1.2rem', marginBottom: '1.2rem'
+          }}>
             {[
               { label: 'Full Name', name: 'name', type: 'text', placeholder: 'Your full name' },
               { label: 'Age', name: 'age', type: 'number', placeholder: 'Your age' },
@@ -65,27 +63,22 @@ export default function AppointmentForm() {
               { label: 'Preferred Time', name: 'time', type: 'time', placeholder: '' },
             ].map(({ label, name, type, placeholder }) => (
               <div key={name}>
-                <label style={labelStyle}>{label}</label>
-                <input
-                  type={type} name={name} value={form[name]}
-                  onChange={handle} placeholder={placeholder}
-                  required style={inputStyle}
+                <label style={{ fontFamily: 'Jost', fontSize: '0.82rem', color: 'var(--sage-dark)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem', display: 'block', fontWeight: 500 }}>{label}</label>
+                <input type={type} name={name} value={form[name]} onChange={handle}
+                  placeholder={placeholder} required style={inputStyle}
                   onFocus={e => e.target.style.borderColor = 'var(--sage)'}
-                  onBlur={e => e.target.style.borderColor = 'rgba(122,158,126,0.3)'}
-                />
+                  onBlur={e => e.target.style.borderColor = 'rgba(122,158,126,0.3)'} />
               </div>
             ))}
           </div>
 
           <div style={{ marginBottom: '2rem' }}>
-            <label style={labelStyle}>Symptoms / Reason for Visit</label>
-            <textarea
-              name="symptoms" value={form.symptoms} onChange={handle}
-              placeholder="Describe your symptoms or reason for consultation..."
-              required rows={4} style={{ ...inputStyle, resize: 'vertical' }}
+            <label style={{ fontFamily: 'Jost', fontSize: '0.82rem', color: 'var(--sage-dark)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem', display: 'block', fontWeight: 500 }}>Symptoms / Reason for Visit</label>
+            <textarea name="symptoms" value={form.symptoms} onChange={handle}
+              placeholder="Describe your symptoms..." required rows={4}
+              style={{ ...inputStyle, resize: 'vertical' }}
               onFocus={e => e.target.style.borderColor = 'var(--sage)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(122,158,126,0.3)'}
-            />
+              onBlur={e => e.target.style.borderColor = 'rgba(122,158,126,0.3)'} />
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '1rem', fontSize: '1rem' }}>
