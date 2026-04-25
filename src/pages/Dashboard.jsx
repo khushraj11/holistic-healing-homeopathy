@@ -15,7 +15,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!localStorage.getItem('doctorAuth')) { navigate('/login'); return; }
     loadData();
-  }, []);
+  }, [navigate]);
 
   const loadData = async () => {
     setLoading(true);
@@ -234,7 +234,6 @@ export default function Dashboard() {
                 </select>
               </div>
 
-              {/* Diagnosis */}
               {[
                 ['diagnosis', '🔍 Diagnosis', 'Enter diagnosis...', 3],
                 ['medication', '💊 Medication & Potency', 'e.g. Belladonna 30C — 3 drops twice daily', 3],

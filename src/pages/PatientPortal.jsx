@@ -14,7 +14,7 @@ export default function PatientPortal() {
     const parsed = JSON.parse(p);
     setPatient(parsed);
     loadRecords(parsed.phone);
-  }, []);
+  }, [navigate]);
 
   const loadRecords = async (phone) => {
     setLoading(true);
