@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { submitAppointment } from '../../utils/sheetApi';
+import { sendConfirmationEmail } from '../../utils/emailService';
 
 export default function AppointmentForm() {
   const [form, setForm] = useState({ name: '', age: '', phone: '', email: '', symptoms: '', date: '', time: '' });
@@ -14,6 +15,9 @@ export default function AppointmentForm() {
     setStatus('');
     try {
       await submitAppointment(form);
+      if (form.email) {
+        await sendConfirmationEmail(form);
+      }
       setStatus('success');
       setForm({ name: '', age: '', phone: '', email: '', symptoms: '', date: '', time: '' });
     } catch {
@@ -65,7 +69,7 @@ export default function AppointmentForm() {
               <div key={name}>
                 <label style={{ fontFamily: 'Jost', fontSize: '0.82rem', color: 'var(--sage-dark)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem', display: 'block', fontWeight: 500 }}>{label}</label>
                 <input type={type} name={name} value={form[name]} onChange={handle}
-                  placeholder={placeholder} required style={inputStyle}
+                  placeholder={placeholder} required={name !== 'email'} style={inputStyle}
                   onFocus={e => e.target.style.borderColor = 'var(--sage)'}
                   onBlur={e => e.target.style.borderColor = 'rgba(122,158,126,0.3)'} />
               </div>
@@ -87,7 +91,7 @@ export default function AppointmentForm() {
 
           {status === 'success' && (
             <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(122,158,126,0.1)', borderRadius: '12px', color: 'var(--sage-dark)', fontFamily: 'Jost', textAlign: 'center' }}>
-              ✅ Appointment booked! We'll confirm within 24 hours.
+              ✅ Appointment booked! Confirmation email sent. We'll confirm within 24 hours.
             </div>
           )}
           {status === 'error' && (
