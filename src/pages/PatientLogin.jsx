@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { sendOTP } from '../utils/firebase';
 
 export default function PatientLogin() {
-  const [step, setStep] = useState('phone'); // phone → otp → name
+  const [step, setStep] = useState('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState(null);
-  const [isNewUser, setIsNewUser] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -27,7 +26,6 @@ export default function PatientLogin() {
       setStep('otp');
     } catch (err) {
       setError('Failed to send OTP. Check phone number and try again.');
-      console.error(err);
       window.recaptchaVerifier = null;
     }
     setLoading(false);
@@ -39,16 +37,12 @@ export default function PatientLogin() {
     setError('');
     try {
       await confirmation.confirm(otp);
-
-      // Check if existing patient
       const patients = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
       const existing = patients.find(p => p.phone === phone || p.phone === `+91${phone}`);
-
       if (existing) {
         localStorage.setItem('currentPatient', JSON.stringify(existing));
         navigate('/patient-portal');
       } else {
-        setIsNewUser(true);
         setStep('name');
       }
     } catch (err) {
@@ -60,10 +54,7 @@ export default function PatientLogin() {
   const handleCreateAccount = (e) => {
     e.preventDefault();
     const newPatient = {
-      name,
-      phone,
-      email,
-      password,
+      name, phone, email, password,
       patientId: generatePatientId(phone)
     };
     const patients = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
@@ -93,7 +84,6 @@ export default function PatientLogin() {
       background: 'linear-gradient(135deg, #e8f0e8, #faf7f0)',
       fontFamily: 'Jost, sans-serif', padding: '2rem'
     }}>
-      {/* Invisible reCAPTCHA */}
       <div id="recaptcha-container"></div>
 
       <div style={{
@@ -101,7 +91,6 @@ export default function PatientLogin() {
         padding: '2.5rem', width: '100%', maxWidth: '440px',
         boxShadow: '0 30px 80px rgba(0,0,0,0.1)'
       }}>
-        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🌿</div>
           <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', color: '#4a7a50', fontWeight: 700 }}>
@@ -119,8 +108,8 @@ export default function PatientLogin() {
           {['phone', 'otp', 'name'].map((s, i) => (
             <div key={s} style={{
               width: '8px', height: '8px', borderRadius: '50%',
-              background: step === s ? '#4a7a50' : 
-                         ((['phone','otp','name'].indexOf(step) > i) ? '#a8c5a0' : '#e0e0e0'),
+              background: step === s ? '#4a7a50' :
+                (['phone', 'otp', 'name'].indexOf(step) > i) ? '#a8c5a0' : '#e0e0e0',
               transition: 'all 0.3s'
             }} />
           ))}
@@ -159,7 +148,8 @@ export default function PatientLogin() {
               width: '100%', padding: '1rem', border: 'none',
               background: phone.length === 10 ? '#4a7a50' : '#ccc',
               color: 'white', borderRadius: '12px',
-              fontFamily: 'Jost', fontSize: '1rem', cursor: phone.length === 10 ? 'pointer' : 'not-allowed'
+              fontFamily: 'Jost', fontSize: '1rem',
+              cursor: phone.length === 10 ? 'pointer' : 'not-allowed'
             }}>
               {loading ? '⏳ Sending OTP...' : '📱 Send OTP'}
             </button>
@@ -194,23 +184,35 @@ export default function PatientLogin() {
               width: '100%', padding: '1rem', border: 'none',
               background: otp.length === 6 ? '#4a7a50' : '#ccc',
               color: 'white', borderRadius: '12px',
-              fontFamily: 'Jost', fontSize: '1rem', cursor: otp.length === 6 ? 'pointer' : 'not-allowed'
+              fontFamily: 'Jost', fontSize: '1rem',
+              cursor: otp.length === 6 ? 'pointer' : 'not-allowed'
             }}>
               {loading ? '⏳ Verifying...' : '✅ Verify OTP'}
             </button>
 
-            <button type="button" onClick={() => { setStep('phone'); setOtp(''); setError(''); window.recaptchaVerifier = null; }}
-              style={{ width: '100%', padding: '0.7rem', border: 'none', background: 'none', color: '#7a9e7e', fontFamily: 'Jost', fontSize: '0.88rem', cursor: 'pointer', marginTop: '0.8rem' }}>
+            <button type="button" onClick={() => {
+              setStep('phone'); setOtp(''); setError('');
+              window.recaptchaVerifier = null;
+            }} style={{
+              width: '100%', padding: '0.7rem', border: 'none',
+              background: 'none', color: '#7a9e7e', fontFamily: 'Jost',
+              fontSize: '0.88rem', cursor: 'pointer', marginTop: '0.8rem'
+            }}>
               ← Change Number
             </button>
           </form>
         )}
 
-        {/* Step 3 — Name (New User) */}
+        {/* Step 3 — New User Profile */}
         {step === 'name' && (
           <form onSubmit={handleCreateAccount}>
-            <div style={{ background: 'rgba(74,122,80,0.08)', borderRadius: '10px', padding: '0.8rem', marginBottom: '1.5rem', textAlign: 'center' }}>
-              <span style={{ fontSize: '0.85rem', color: '#4a7a50' }}>✅ Phone verified: +91 {phone}</span>
+            <div style={{
+              background: 'rgba(74,122,80,0.08)', borderRadius: '10px',
+              padding: '0.8rem', marginBottom: '1.5rem', textAlign: 'center'
+            }}>
+              <span style={{ fontSize: '0.85rem', color: '#4a7a50' }}>
+                ✅ Phone verified: +91 {phone}
+              </span>
             </div>
 
             <div style={{ marginBottom: '1.2rem' }}>
@@ -248,7 +250,9 @@ export default function PatientLogin() {
         )}
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <a href="/" style={{ color: '#7a9e7e', fontSize: '0.85rem', textDecoration: 'none' }}>← Back to Home</a>
+          <a href="/" style={{ color: '#7a9e7e', fontSize: '0.85rem', textDecoration: 'none' }}>
+            ← Back to Home
+          </a>
         </div>
       </div>
     </div>
