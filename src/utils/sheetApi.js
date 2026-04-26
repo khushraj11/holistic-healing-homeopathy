@@ -15,8 +15,8 @@ export const fetchAppointments = async () => {
   return await res.json();
 };
 
-export const fetchPatientRecords = async (phone) => {
-  const res = await fetch(`${SHEET_API_URL}?action=getPatientRecords&phone=${phone}`);
+export const fetchPatientRecords = async (patientId) => {
+  const res = await fetch(`${SHEET_API_URL}?action=getPatientRecords&patientId=${patientId}`);
   return await res.json();
 };
 
